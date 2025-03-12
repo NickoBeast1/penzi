@@ -47,18 +47,19 @@ function handleMatchNext(req, res) {
         return;
       }
 
-      const { lowerAge, upperAge, town, offset } = session;
+      // Destructure including targetGender
+      const { lowerAge, upperAge, town, offset, targetGender } = session;
 
       // Query for the next 3 matches using the stored criteria with an offset.
       const query = `
         SELECT full_name, age, phone_number 
         FROM Users 
-        WHERE gender = 'Female'
+        WHERE gender = ?
           AND age BETWEEN ? AND ?
           AND town = ?
         LIMIT 3 OFFSET ?
       `;
-      database.query(query, [lowerAge, upperAge, town, offset], (err, results) => {
+      database.query(query, [targetGender, lowerAge, upperAge, town, offset], (err, results) => {
         if (err) {
           console.log("Error querying next matches:", err);
           return res.status(500).json({ error: "Internal Server Error" });
@@ -80,6 +81,7 @@ function handleMatchNext(req, res) {
             lowerAge,
             upperAge,
             town,
+            targetGender,
             offset: offset + results.length
           });
           responseMessage += `\nSend NEXT to receive more matches.`;

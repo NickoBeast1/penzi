@@ -14,6 +14,7 @@ const matchConfirmRoutes = require('./routes/matchConfirmRoutes');
 const detailsRegistrationRoutes = require('./routes/detailsRegistrationRoutes');
 const selfDescriptionRequestRoutes = require('./routes/selfDescriptionRequestRoutes');
 const notifyMatchRoutes = require('./routes/notifyMatchRoutes');
+const mainApiRoutes = require('./routes/mainApiRoutes');
 
 const app = express();
 app.use(bodyParser.json());
@@ -31,6 +32,7 @@ app.use('/api', matchConfirmRoutes);
 app.use('/api', detailsRegistrationRoutes);
 app.use('/api', selfDescriptionRequestRoutes);
 app.use('/api', notifyMatchRoutes);
+app.use('/api', mainApiRoutes);
 
 
 const PORT = process.env.PORT || 5000;
