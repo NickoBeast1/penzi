@@ -78,7 +78,7 @@ function describeUser(req, res) {
             } else if (gender && gender.toLowerCase() === "female") {
               pronoun = "herself";
             }
-            responseMessage = `${full_name} describes ${pronoun} as ${self_description}`;
+            responseMessage = `${full_name} describes ${pronoun} as ${self_description}. Send NOTIFY#YOUR_PHONE#REQUESTED_PHONE to notify match`;
           }
         }
 

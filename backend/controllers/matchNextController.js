@@ -68,7 +68,7 @@ function handleMatchNext(req, res) {
         let responseMessage = "";
 
         if (results.length === 0) {
-          responseMessage = "No more matches found.";
+          responseMessage = "No more matches found.Send match phone to get more details about match";
           // Optionally, clear the session if no more matches exist:
           // clearMatchSession(sender);
         } else {

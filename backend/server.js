@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors')
 const bodyParser = require('body-parser');
 const usersRoutes = require('./routes/usersRoutes');
 const profileRoutes = require('./routes/profileRoutes');
@@ -19,6 +20,7 @@ const mainApiRoutes = require('./routes/mainApiRoutes');
 const app = express();
 app.use(bodyParser.json());
 app.use('/api', usersRoutes);
+app.use(cors());
 app.use('/api', profileRoutes);
 app.use('/api', serviceActivationRoutes);
 app.use('/api', serviceRegistrationRoutes);

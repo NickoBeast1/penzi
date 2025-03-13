@@ -19,55 +19,55 @@ async function main(req, res) {
 
     let response; // Will hold the data returned by one of the helper functions
 
-    // 1️⃣ Service Activation
+    // Service Activation
     if (message.toUpperCase().includes("PENZI")) {
       // e.g. "PENZI"
       response = await serviceActivation(req, res);
 
-    // 2️⃣ Service Registration
+    // Service Registration
     } else if (message.toUpperCase().startsWith("START#")) {
       // e.g. "start#Jamal Jalang’o#29#Male#Mombasa#Bamburi"
       response = await serviceRegistration(req, res);
 
-    // 3️⃣ Details Registration
+    // Details Registration
     } else if (message.toUpperCase().startsWith("DETAILS#")) {
       // e.g. "details#graduate#accountant#divorced#muslim#somali"
       response = await detailsRegistration(req, res);
 
-    // 4️⃣ Self-Description
+    // Self-Description
     } else if (message.toUpperCase().startsWith("MYSELF")) {
       // e.g. "MYSELF tall, dark and handsome"
       response = await selfDescription(req, res);
 
-    // 5️⃣ Match Request
+    // Match Request
     } else if (message.toUpperCase().startsWith("MATCH#")) {
       // e.g. "match#26-30#Nairobi"
       response = await matchRequest(req, res);
 
-    // 6️⃣ Subsequent Matching (NEXT)
+    // Subsequent Matching (NEXT)
     } else if (message.trim().toUpperCase() === "NEXT") {
       // e.g. "NEXT"
       response = await matchNext(req, res);
 
-    // 7️⃣ Self-Description Request (DESCRIBE phone)
+    // Self-Description Request (DESCRIBE phone)
     } else if (message.toUpperCase().startsWith("DESCRIBE")) {
       // e.g. "DESCRIBE 0702556677"
       response = await selfDescriptionRequest(req, res);
 
-    // 8️⃣ Match Confirmation (YES)
+    //  Match Confirmation (YES)
     } else if (message.trim().toUpperCase() === "YES") {
       // e.g. "YES"
       response = await matchConfirm(req, res);
 
-    // 9️⃣ If the message is a plain phone number and the optional "action" equals "notify"
+    //  If the message is a plain phone number and the optional "action" equals "notify"
   } else if (message.toUpperCase().startsWith("NOTIFY#")) {
     response = await matchNotify(req, res);
   
-  //  🔟 For a plain phone number without an action, default to "more details"
+  // For a plain phone number without an action, default to "more details"
     } else if (isPhoneNumber(message)) {
       response = await moreDetails(req, res);
 
-    // 11) Fallback / Unknown Command
+    // Fallback / Unknown Command
     } else {
       return res.status(400).json({ response: "Unknown command. Please try again." });
     }
