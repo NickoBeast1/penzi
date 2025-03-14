@@ -1,86 +1,175 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import axios from 'axios'
 
-
 function App() {
-  const [chatMessages, setChatMessages] = useState([]);
-  const [inputMessage, setInputMessage] = useState("");
+  // 1️⃣ State for login & phone number
+  const [phoneNumber, setPhoneNumber] = useState("")
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
+  // 2️⃣ Chat state
+  const [chatMessages, setChatMessages] = useState([])
+  const [inputMessage, setInputMessage] = useState("")
+
+  // 3️⃣ Handle Login
+  const handleLogin = () => {
+    if (phoneNumber.trim() !== "") {
+      setIsLoggedIn(true)
+    }
+  }
+
+  // 4️⃣ Send Chat Message
   const sendMessage = async () => {
-    if (inputMessage.trim() === "") return;
+    if (!inputMessage.trim()) return
 
-    // Append user's message to chatMessages
-    const userMsg = { sender: "user", text: inputMessage };
-    setChatMessages((prev) => [...prev, userMsg]);
+    // Add user's message to chat
+    const userMessage = {
+      sender: "user",
+      text: inputMessage,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    }
+    setChatMessages(prev => [...prev, userMessage])
 
     try {
-      // Send API request to your main API endpoint
-      // Adjust the "sender" value as needed (here we use a hardcoded phone number for testing)
-      const response = await axios.post('http://localhost:5000/api/main', {
-        sender: "+254700111222 ",
+      // Post request to your main endpoint
+      const response = await axios.post("http://localhost:5000/api/main", {
+        sender: phoneNumber,
         message: inputMessage
-      });
-      
-      // Append the response from the API as a system message
-      const systemMsg = { sender: "system", text: response.data.response || response.data };
-      setChatMessages((prev) => [...prev, systemMsg]);
-    } catch (error) {
-      console.error("Error sending message:", error);
-      const errorMsg = { sender: "system", text: "Error: " + error.message };
-      setChatMessages((prev) => [...prev, errorMsg]);
-    }
-    
-    setInputMessage("");
-  };
+      })
 
-  return (
-    <div style={styles.container}>
-      <h1 style={styles.header}>Penzi </h1>
-      <div style={styles.chatWindow}>
-        {chatMessages.map((msg, index) => (
-          <div key={index} style={{...styles.messageContainer, justifyContent: msg.sender === "user" ? "flex-end" : "flex-start"}}>
-            <span style={{ 
-              ...styles.messageBubble, 
-              backgroundColor: msg.sender === "user" ? "#DCF8C6" : "#FFF"
-            }}>
-              {msg.text}
-            </span>
-          </div>
-        ))}
+      // System response
+      const systemMsgText = response.data.response || response.data
+      const systemMessage = {
+        sender: "system",
+        text: systemMsgText,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      }
+      setChatMessages(prev => [...prev, systemMessage])
+    } catch (error) {
+      const errorMsg = {
+        sender: "system",
+        text: "Error: " + error.message,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      }
+      setChatMessages(prev => [...prev, errorMsg])
+    }
+
+    setInputMessage("")
+  }
+
+  // 5️⃣ If Not Logged In, Show Login Screen
+  if (!isLoggedIn) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-pink-400 to-red-500 p-4">
+        <div className="bg-white bg-opacity-90 rounded-xl shadow-2xl p-6 w-full max-w-sm text-center">
+          <img src="/penzi.png" alt="Penzi Logo" className="mx-auto mb-4 w-16 h-16" />
+          <h1 className="text-3xl font-bold mb-2 text-gray-800">Welcome to Penzi</h1>
+          <p className="text-gray-600 mb-6">Find Your Perfect Match Today!</p>
+          
+          <input
+            type="text"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+            className="border border-gray-300 rounded px-4 py-2 mb-4 w-full focus:outline-none focus:ring-2 focus:ring-red-500"
+            placeholder="+254712345678"
+          />
+          
+          <button
+            onClick={handleLogin}
+            className="bg-red-500 text-white w-full py-2 rounded hover:bg-red-600 transition-colors font-semibold"
+          >
+            Login
+          </button>
+          
+          <p className="text-xs text-gray-500 mt-4">
+            We only use your phone number to connect you with potential matches securely.
+          </p>
+        </div>
       </div>
-      <div style={styles.inputContainer}>
-        <input 
-          type="text" 
-          value={inputMessage} 
-          onChange={(e) => setInputMessage(e.target.value)} 
-          style={styles.input}
-          placeholder="Type your message..."
-        />
-        <button onClick={sendMessage} style={styles.button}>Send</button>
+    )
+  }
+
+  // 6️⃣ If Logged In, Show Enhanced Chat Interface
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-lime-400 to-teal-400 flex items-center justify-center p-6">
+      {/* Chat Container */}
+      <div className="w-full max-w-xl bg-white bg-opacity-90 rounded-2xl shadow-2xl p-6 flex flex-col h-[650px]">
+        
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center space-x-2">
+            <img
+              src="/penzi.png" // or your new transparent icon
+              alt="Penzi Logo"
+              className="w-8 h-8 object-cover rounded-full"
+            />
+            <h1 className="text-pink-600 font-bold text-xl">Penziiiii</h1>
+          </div>
+          <span className="text-sm text-gray-700 italic">Find your perfect match</span>
+        </div>
+
+        {/* Messages */}
+        <div className="overflow-y-auto mb-4 flex-1 pr-2">
+          {chatMessages.map((msg, index) => (
+            <div
+              key={index}
+              className={`flex items-end my-2 ${
+                msg.sender === 'user' ? 'justify-end' : 'justify-start'
+              }`}
+            >
+              {/* Avatars */}
+              {msg.sender === 'system' && (
+                <img
+                  src="https://cdn.pixabay.com/photo/2023/03/22/05/38/heart-7868220_1280.png"
+                  alt="System"
+                  className="w-6 h-6 object-cover rounded-full mr-2"
+                />
+              )}
+              {msg.sender === 'user' && (
+                <img
+                  src="https://cdn.pixabay.com/photo/2017/10/31/10/58/heart-2805508_1280.png"
+                  alt="User"
+                  className="w-6 h-6 object-cover rounded-full mr-2"
+                />
+              )}
+
+              <div
+                className={`relative max-w-[65%] rounded-lg px-4 py-3 break-words shadow-md ${
+                  msg.sender === 'user'
+                    ? 'bg-pink-500 text-white'
+                    : 'bg-yellow-300 text-black'
+                }`}
+              >
+                <div>{msg.text}</div>
+                {/* Timestamp */}
+                <div className="text-xs text-black text-opacity-70 mt-1 flex justify-end">
+                  {msg.time}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Input Bar */}
+        <div className="flex">
+          <input
+            type="text"
+            className="flex-1 rounded-l-lg px-4 py-2 text-black outline-none"
+            placeholder="Type your message..."
+            value={inputMessage}
+            onChange={(e) => setInputMessage(e.target.value)}
+            // Press Enter to send
+            onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+          />
+          <button
+            onClick={sendMessage}
+            className="bg-pink-600 hover:bg-pink-700 text-white px-6 py-2 rounded-r-lg font-semibold transition-colors"
+          >
+            Send
+          </button>
+        </div>
       </div>
     </div>
-  );
+  )
 }
 
-const styles = {
-  container: { maxWidth: 600, margin: "20px auto", padding: 20, fontFamily: "Arial, sans-serif" },
-  header: { textAlign: "center" },
-  chatWindow: { border: "1px solid #ccc", padding: 10, height: 400, overflowY: "scroll", backgroundColor: "#f5f5f5" },
-  messageContainer: { display: "flex", margin: "10px 0" },
-  messageBubble: { 
-    display: "inline-block", 
-    padding: "10px 15px", 
-    borderRadius: "15px", 
-    border: "1px solid #ccc", 
-    maxWidth: "80%" ,
-    wordWrap: "break-word",
-    overflowWrap: "break-word",
-    whiteSpace: "pre-wrap"
-  },
-  inputContainer: { display: "flex", marginTop: 10 },
-  input: { flex: 1, padding: 10, fontSize: 16 },
-  button: { padding: "10px 20px", fontSize: 16, marginLeft: 10 }
-};
-
-export default App;
-
+export default App
