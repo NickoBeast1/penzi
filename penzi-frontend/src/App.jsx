@@ -116,22 +116,6 @@ function App() {
                 msg.sender === 'user' ? 'justify-end' : 'justify-start'
               }`}
             >
-              {/* Avatars */}
-              {msg.sender === 'system' && (
-                <img
-                  src="https://cdn.pixabay.com/photo/2023/03/22/05/38/heart-7868220_1280.png"
-                  alt="System"
-                  className="w-6 h-6 object-cover rounded-full mr-2"
-                />
-              )}
-              {msg.sender === 'user' && (
-                <img
-                  src="https://cdn.pixabay.com/photo/2017/10/31/10/58/heart-2805508_1280.png"
-                  alt="User"
-                  className="w-6 h-6 object-cover rounded-full mr-2"
-                />
-              )}
-
               <div
                 className={`relative max-w-[65%] rounded-lg px-4 py-3 break-words shadow-md ${
                   msg.sender === 'user'
