@@ -1,0 +1,55 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8.0.15
+    container_name: penzi-mysql
+    # restart: always
+    env_file:
+      - .env
+      
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./mysql_data_penzi:/var/lib/mysql
+      # Mount your SQL dump for auto-initialization:
+      - ./penzi.sql:/docker-entrypoint-initdb.d/penzi.sql
+    networks:
+      - penzi_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: penzi-backend
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app
+    env_file:
+      - ./backend/.env_docker
+    depends_on:
+      - mysql
+    networks:
+      - penzi_network
+
+  frontend:
+    build:
+      context: ./penzi-frontend
+      dockerfile: Dockerfile
+    container_name: penzi-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./penzi-frontend:/app
+      - node_modules_frontend:/app/node_modules
+    command: npm run dev
+    depends_on:
+      - backend
+      - mysql
+
+networks:
+  penzi_network:
+
+volumes:
+  node_modules_frontend:

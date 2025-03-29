@@ -2,22 +2,22 @@ import React, { useState } from 'react'
 import axios from 'axios'
 
 function App() {
-  // 1️⃣ State for login & phone number
+  // State for login & phone number
   const [phoneNumber, setPhoneNumber] = useState("")
   const [isLoggedIn, setIsLoggedIn] = useState(false)
 
-  // 2️⃣ Chat state
+  // Chat state
   const [chatMessages, setChatMessages] = useState([])
   const [inputMessage, setInputMessage] = useState("")
 
-  // 3️⃣ Handle Login
+  // Handle Login
   const handleLogin = () => {
     if (phoneNumber.trim() !== "") {
       setIsLoggedIn(true)
     }
   }
 
-  // 4️⃣ Send Chat Message
+  // Send Chat Message
   const sendMessage = async () => {
     if (!inputMessage.trim()) return
 
@@ -56,7 +56,7 @@ function App() {
     setInputMessage("")
   }
 
-  // 5️⃣ If Not Logged In, Show Login Screen
+  // If Not Logged In, Show Login Screen
   if (!isLoggedIn) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-pink-400 to-red-500 p-4">
@@ -88,7 +88,7 @@ function App() {
     )
   }
 
-  // 6️⃣ If Logged In, Show Enhanced Chat Interface
+  // If Logged In, Show Enhanced Chat Interface
   return (
     <div className="min-h-screen bg-gradient-to-br from-lime-400 to-teal-400 flex items-center justify-center p-6">
       {/* Chat Container */}
